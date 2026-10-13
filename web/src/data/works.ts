@@ -40,14 +40,15 @@ export const WORKS: Record<'en' | 'kn', WorksLang> = {
       items: [
         { name: 'Technology', slug: 'tech', meta: 'Concept · Script · Production · Direction', link: 'https://www.instagram.com/p/DeHRhLnzswi/', desc: 'Developed the concept, wrote the script, generated video visuals, contributed to production and directed the video before editing.', role: 'Creative production', video: '/works/videos/tech.mp4', tags: ['Video'] },
         { name: 'Home Appliances', slug: 'appliance', meta: 'Concept · Script · Production · Direction', link: 'https://www.instagram.com/p/DeMc_pKP1t1/', desc: 'Developed the concept, wrote the script, generated video visuals, contributed to production and directed the video before editing.', role: 'Creative production', video: '/works/videos/appliance.mp4', tags: ['Video'] },
-        { name: 'Polar Bear', slug: 'polar-bear', meta: 'Concept · Script · Production · Direction', link: 'https://www.instagram.com/p/DbdYCHOys14/', desc: 'Developed the concept, wrote the script, generated video visuals, contributed to production and directed the video before editing.', role: 'Creative production', video: '/works/videos/polar-bear.mp4', tags: ['Video'] },
+        { name: 'Collaborations - Polar Bear Ice Creams', slug: 'polar-bear', meta: 'Concept · Script · Production · Direction', link: 'https://www.instagram.com/p/DbdYCHOys14/', desc: 'Developed the concept, wrote the script, generated video visuals, contributed to production and directed the video before editing.', role: 'Creative production', video: '/works/videos/polar-bear.mp4', tags: ['Video'] },
         { name: 'Business Stories', slug: 'business-story', meta: 'Concept · Script · Production · Direction', link: 'https://www.instagram.com/p/DdRNQICvkXu/', desc: 'Developed the concept, wrote the script, generated video visuals, contributed to production and directed the video before editing.', role: 'Creative production', video: '/works/videos/business-story.mp4', tags: ['Video'] }
       ],
     },
       {
-      id: 'campaigns', no: '02', title: 'Campaigns', tagline: 'Little Bengaluru Stories · 8 episodes',
+      id: 'campaigns', no: '02', title: 'Campaigns', tagline: 'Creative Campaigns · Collaborations',
       items: [
-        { name: 'Temples of Bengaluru', slug: 'temples-bengaluru', meta: '8-episode series', link: 'https://www.instagram.com/reel/Daxg7UtSCxt/', desc: 'Wrote scripts for all eight episodes of the Temples of Bengaluru heritage series for Little Bengaluru Stories.', role: 'Scriptwriter — all 8 episodes', video: '/works/videos/temples-bengaluru.mp4', tags: ['Heritage', 'Series'] }
+        { name: 'Temples of Bengaluru', slug: 'temples-bengaluru', meta: '8-episode series', link: 'https://www.instagram.com/reel/Daxg7UtSCxt/', desc: 'Wrote scripts for all eight episodes of the Temples of Bengaluru heritage series for Little Bengaluru Stories.', role: 'Scriptwriter — all 8 episodes', video: '/works/videos/temples-bengaluru.mp4', tags: ['Heritage', 'Series'] },
+        { name: '100s of Bengaluru', slug: '100s-of-bengaluru', meta: '7-episode series', link: 'https://www.instagram.com/reel/DcGkqEWSezm/', desc: 'A seven-episode series celebrating local pride in Bengaluru.', role: 'Campaign collaboration', tags: ['Local Pride', 'Series'] }
       ],
     },
       {
@@ -87,14 +88,15 @@ export const WORKS: Record<'en' | 'kn', WorksLang> = {
       items: [
         { name: 'ತಂತ್ರಜ್ಞಾನ', slug: 'tech', meta: 'ಪರಿಕಲ್ಪನೆ · ಸ್ಕ್ರಿಪ್ಟ್ · ನಿರ್ಮಾಣ · ನಿರ್ದೇಶನ', link: 'https://www.instagram.com/p/DeHRhLnzswi/', desc: 'ಪರಿಕಲ್ಪನೆ, ಸ್ಕ್ರಿಪ್ಟ್, ವೀಡಿಯೊ ದೃಶ್ಯಗಳ ರಚನೆ, ನಿರ್ಮಾಣ ಮತ್ತು ಎಡಿಟಿಂಗ್\u200cಗೆ ಮುನ್ನ ನಿರ್ದೇಶನ.', role: 'ಸೃಜನಾತ್ಮಕ ನಿರ್ಮಾಣ', video: '/works/videos/tech.mp4', tags: ['Video'] },
         { name: 'ಗೃಹೋಪಯೋಗಿ ಸಾಧನಗಳು', slug: 'appliance', meta: 'ಪರಿಕಲ್ಪನೆ · ಸ್ಕ್ರಿಪ್ಟ್ · ನಿರ್ಮಾಣ · ನಿರ್ದೇಶನ', link: 'https://www.instagram.com/p/DeMc_pKP1t1/', desc: 'ಪರಿಕಲ್ಪನೆ, ಸ್ಕ್ರಿಪ್ಟ್, ವೀಡಿಯೊ ದೃಶ್ಯಗಳ ರಚನೆ, ನಿರ್ಮಾಣ ಮತ್ತು ಎಡಿಟಿಂಗ್\u200cಗೆ ಮುನ್ನ ನಿರ್ದೇಶನ.', role: 'ಸೃಜನಾತ್ಮಕ ನಿರ್ಮಾಣ', video: '/works/videos/appliance.mp4', tags: ['Video'] },
-        { name: 'ಹಿಮಕರಡಿ', slug: 'polar-bear', meta: 'ಪರಿಕಲ್ಪನೆ · ಸ್ಕ್ರಿಪ್ಟ್ · ನಿರ್ಮಾಣ · ನಿರ್ದೇಶನ', link: 'https://www.instagram.com/p/DbdYCHOys14/', desc: 'ಪರಿಕಲ್ಪನೆ, ಸ್ಕ್ರಿಪ್ಟ್, ವೀಡಿಯೊ ದೃಶ್ಯಗಳ ರಚನೆ, ನಿರ್ಮಾಣ ಮತ್ತು ಎಡಿಟಿಂಗ್\u200cಗೆ ಮುನ್ನ ನಿರ್ದೇಶನ.', role: 'ಸೃಜನಾತ್ಮಕ ನಿರ್ಮಾಣ', video: '/works/videos/polar-bear.mp4', tags: ['Video'] },
+        { name: 'ಸಹಯೋಗಗಳು - ಪೋಲಾರ್ ಬೇರ್ ಐಸ್ ಕ್ರೀಮ್ಸ್', slug: 'polar-bear', meta: 'ಪರಿಕಲ್ಪನೆ · ಸ್ಕ್ರಿಪ್ಟ್ · ನಿರ್ಮಾಣ · ನಿರ್ದೇಶನ', link: 'https://www.instagram.com/p/DbdYCHOys14/', desc: 'ಪರಿಕಲ್ಪನೆ, ಸ್ಕ್ರಿಪ್ಟ್, ವೀಡಿಯೊ ದೃಶ್ಯಗಳ ರಚನೆ, ನಿರ್ಮಾಣ ಮತ್ತು ಎಡಿಟಿಂಗ್\u200cಗೆ ಮುನ್ನ ನಿರ್ದೇಶನ.', role: 'ಸೃಜನಾತ್ಮಕ ನಿರ್ಮಾಣ', video: '/works/videos/polar-bear.mp4', tags: ['Video'] },
         { name: 'ಉದ್ಯಮ ಕಥೆಗಳು', slug: 'business-story', meta: 'ಪರಿಕಲ್ಪನೆ · ಸ್ಕ್ರಿಪ್ಟ್ · ನಿರ್ಮಾಣ · ನಿರ್ದೇಶನ', link: 'https://www.instagram.com/p/DdRNQICvkXu/', desc: 'ಪರಿಕಲ್ಪನೆ, ಸ್ಕ್ರಿಪ್ಟ್, ವೀಡಿಯೊ ದೃಶ್ಯಗಳ ರಚನೆ, ನಿರ್ಮಾಣ ಮತ್ತು ಎಡಿಟಿಂಗ್\u200cಗೆ ಮುನ್ನ ನಿರ್ದೇಶನ.', role: 'ಸೃಜನಾತ್ಮಕ ನಿರ್ಮಾಣ', video: '/works/videos/business-story.mp4', tags: ['Video'] }
       ],
     },
       {
-      id: 'campaigns', no: '02', title: 'ಅಭಿಯಾನಗಳು', tagline: 'ಲಿಟಲ್ ಬೆಂಗಳೂರು ಸ್ಟೋರೀಸ್ · 8 ಕಂತುಗಳು',
+      id: 'campaigns', no: '02', title: 'ಅಭಿಯಾನಗಳು', tagline: 'ಸೃಜನಾತ್ಮಕ ಅಭಿಯಾನಗಳು · ಸಹಯೋಗಗಳು',
       items: [
-        { name: 'ಬೆಂಗಳೂರಿನ ದೇವಾಲಯಗಳು', slug: 'temples-bengaluru', meta: '8 ಕಂತುಗಳ ಸರಣಿ', link: 'https://www.instagram.com/reel/Daxg7UtSCxt/', desc: 'ಲಿಟಲ್ ಬೆಂಗಳೂರು ಸ್ಟೋರೀಸ್\u200cನ ಬೆಂಗಳೂರಿನ ದೇವಾಲಯಗಳು ಸರಣಿಯ ಎಲ್ಲಾ ಎಂಟು ಕಂತುಗಳಿಗೆ ಸ್ಕ್ರಿಪ್ಟ್ ಬರೆದಿದ್ದೇನೆ.', role: 'ಸ್ಕ್ರಿಪ್ಟ್ ರೈಟರ್ — ಎಲ್ಲಾ 8 ಕಂತುಗಳು', video: '/works/videos/temples-bengaluru.mp4', tags: ['ಪರಂಪರೆ', 'ಸರಣಿ'] }
+        { name: 'ಬೆಂಗಳೂರಿನ ದೇವಾಲಯಗಳು', slug: 'temples-bengaluru', meta: '8 ಕಂತುಗಳ ಸರಣಿ', link: 'https://www.instagram.com/reel/Daxg7UtSCxt/', desc: 'ಲಿಟಲ್ ಬೆಂಗಳೂರು ಸ್ಟೋರೀಸ್\u200cನ ಬೆಂಗಳೂರಿನ ದೇವಾಲಯಗಳು ಸರಣಿಯ ಎಲ್ಲಾ ಎಂಟು ಕಂತುಗಳಿಗೆ ಸ್ಕ್ರಿಪ್ಟ್ ಬರೆದಿದ್ದೇನೆ.', role: 'ಸ್ಕ್ರಿಪ್ಟ್ ರೈಟರ್ — ಎಲ್ಲಾ 8 ಕಂತುಗಳು', video: '/works/videos/temples-bengaluru.mp4', tags: ['ಪರಂಪರೆ', 'ಸರಣಿ'] },
+        { name: '100s of Bengaluru', slug: '100s-of-bengaluru', meta: '7 ಕಂತುಗಳ ಸರಣಿ', link: 'https://www.instagram.com/reel/DcGkqEWSezm/', desc: 'ಬೆಂಗಳೂರಿನ ಸ್ಥಳೀಯ ಹೆಮ್ಮೆಯನ್ನು ಆಚರಿಸುವ ಏಳು ಕಂತುಗಳ ಸರಣಿ.', role: 'ಅಭಿಯಾನ ಸಹಯೋಗ', tags: ['ಸ್ಥಳೀಯ ಹೆಮ್ಮೆ', 'ಸರಣಿ'] }
       ],
     },
       {
