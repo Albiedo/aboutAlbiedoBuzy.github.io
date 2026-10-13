@@ -272,7 +272,6 @@ function Man2({
   )
 
   // 履历锚点 DOM 元素（决定当前播放到第几段）
-  const anchorEls = useRef<any>(null)
   // 作品区画廊 DOM 元素（决定作品入场 / 横移阶段的帧）
   const galleryEl = useRef<any>(null)
 
@@ -298,12 +297,10 @@ function Man2({
 
     // 1) 由履历锚点（文档坐标）算连续索引 s：
     //    顶部 s≈-1，sysu 居中 s=0，hotsar=1 … zooop=4
-    if (!anchorEls.current) {
-      anchorEls.current = POINTS.map((n) => document.querySelector(`[data-point="${n}"]`))
-    }
-    const els = anchorEls.current
-    // 节点停顿：对每段滚动做停顿重映射——靠近某节点的一段滚动里 s 保持不变（停顿），
-    // 段中部快速过渡到下一节点。只改"滚动→s"的节奏，glb 动画仍是 s 的线性函数。
+    // Re-query anchors when the résumé language or entry count changes.
+    // Some focus points may not have a corresponding résumé entry.
+    const els = POINTS.map((n) => document.querySelector(`[data-point="${n}"]`))
+    // 节点停顿：对每段滚动做停顿重映射。
     const d = THREE.MathUtils.clamp(cam.dwell, 0, 0.49)
     const dwell = (t: number) => {
       if (d <= 0) return t
@@ -311,22 +308,27 @@ function Man2({
       if (t > 1 - d) return 1
       return THREE.MathUtils.smoothstep((t - d) / (1 - 2 * d), 0, 1)
     }
-    let sTarget = THREE.MathUtils.clamp(frameSmooth.current / FRAMES_PER_NODE - 1, -1, M - 1)
-    if (els && els.length === M && els.every(Boolean)) {
-      // 参考线在视口 NODE_LINE 高度；锚点用条目顶部（文字位置，不含底部大 padding）
+    // Never derive the scroll target from the previous animation frame:
+    // that would prevent reverse scrolling when an anchor is missing.
+    let sTarget = -1
+    const available = els
+      .map((el, index) => el ? { el, index } : null)
+      .filter((item): item is { el: Element; index: number } => item !== null)
+    if (available.length) {
       const refLine = window.scrollY + window.innerHeight * NODE_LINE
-      const tops = els.map((el: any) => el.getBoundingClientRect().top + window.scrollY)
+      const tops = available.map(({ el }) => el.getBoundingClientRect().top + window.scrollY)
       if (refLine <= tops[0]) {
-        // 顶部 → sysu 的渐入段：scrollY=0 时 s=-1（第 0 帧），sysu 到达参考线时 s=0
         const heroScroll = Math.max(1, tops[0] - window.innerHeight * NODE_LINE)
-        sTarget = -1 + dwell(THREE.MathUtils.clamp(window.scrollY / heroScroll, 0, 1))
-      } else if (refLine >= tops[M - 1]) {
-        sTarget = M - 1
+        sTarget = -1 + (available[0].index + 1) * dwell(
+          THREE.MathUtils.clamp(window.scrollY / heroScroll, 0, 1)
+        )
+      } else if (refLine >= tops[tops.length - 1]) {
+        sTarget = available[available.length - 1].index
       } else {
-        for (let i = 0; i < M - 1; i++) {
+        for (let i = 0; i < available.length - 1; i++) {
           if (refLine <= tops[i + 1]) {
             const t = (refLine - tops[i]) / Math.max(1, tops[i + 1] - tops[i])
-            sTarget = i + dwell(t)
+            sTarget = THREE.MathUtils.lerp(available[i].index, available[i + 1].index, dwell(t))
             break
           }
         }

@@ -42,57 +42,97 @@ interface ResumeEntry {
 const RESUME: Record<'en' | 'kn' | 'zh', { title: string; entries: ResumeEntry[] }> = {
   en: {
     title: 'Résumé',
-    entries: [
-      {
-        period: 'Current',
-        place: 'Independent',
-        role: 'Social Media Content Strategist & Project Manager',
-        points: [
-          'Plan and coordinate social media content from idea development to production.',
-          'Develop content strategies and storytelling approaches for digital audiences.',
-          'Coordinate creative workflows involving scriptwriters and video editors.',
-          'Work across regional storytelling, technology explainers, and business content.',
-        ],
-      },
-      {
-        period: '3+ Years',
-        place: 'Freelance',
-        role: 'Scriptwriter',
-        points: [
-          'Write short-form scripts for social media and digital video.',
-          'Adapt stories for regional audiences with attention to language, culture, and context.',
-          'Develop hooks, narrative flow, and calls to action for audience engagement.',
-          'Work across technology, consumer products, and business storytelling.',
-        ],
-      },
+entries: [
+  {
+    period: 'Current',
+    place: 'Independent',
+    role: 'Social Media Content Strategist & Project Manager',
+    points: [
+      'Plan and coordinate social media content from idea development to production.',
+      'Develop content strategies and storytelling approaches for digital audiences.',
+      'Coordinate creative workflows involving scriptwriters and video editors.',
+      'Work across regional storytelling, technology explainers, and business content.',
     ],
+  },
+  {
+    period: '3+ Years',
+    place: 'Freelance',
+    role: 'Scriptwriter',
+    points: [
+      'Write short-form scripts for social media and digital video.',
+      'Adapt stories for regional audiences with attention to language, culture, and context.',
+      'Develop hooks, narrative flow, and calls to action for audience engagement.',
+      'Work across technology, consumer products, and business storytelling.',
+    ],
+  },
+  {
+    period: 'Jul 2025 – Apr 2026',
+    place: 'Syngene International Ltd.',
+    role: 'Research Professional',
+    points: [
+      'Worked in a scientific research environment with exposure to synthetic and medicinal chemistry.',
+      'Applied an understanding of chemistry research practices and laboratory workflows.',
+      'Adapted to evolving research requirements while developing scientific and technical skills.',
+    ],
+  },
+  {
+    period: 'Dec 2023 – Jun 2025',
+    place: 'Analytica Chemie Inc.',
+    role: 'Synthetic Chemistry R&D',
+    points: [
+      'Worked in synthetic chemistry research and development, with a focus on organic synthesis and process optimization.',
+      'Used analytical characterization techniques, including NMR, mass spectrometry, and HPLC.',
+      'Maintained a strong focus on environmental, health, and safety (EHS) practices and laboratory safety.',
+    ],
+  },
+],
   },
   kn: {
     title: 'ನನ್ನ ಅನುಭವ',
-    entries: [
-      {
-        period: 'ಪ್ರಸ್ತುತ',
-        place: 'ಸ್ವತಂತ್ರವಾಗಿ',
-        role: 'ಸೋಷಿಯಲ್ ಮೀಡಿಯಾ ಕಂಟೆಂಟ್ ಸ್ಟ್ರಾಟೆಜಿಸ್ಟ್ ಮತ್ತು ಪ್ರಾಜೆಕ್ಟ್ ಮ್ಯಾನೇಜರ್',
-        points: [
-          'ಐಡಿಯಾ ರೂಪಿಸುವುದರಿಂದ ಕಂಟೆಂಟ್ ನಿರ್ಮಾಣದವರೆಗೆ ಸೋಷಿಯಲ್ ಮೀಡಿಯಾ ಕೆಲಸಗಳನ್ನು ಯೋಜಿಸಿ ಸಂಯೋಜಿಸುವುದು.',
-          'ಡಿಜಿಟಲ್ ಪ್ರೇಕ್ಷಕರಿಗಾಗಿ ಕಂಟೆಂಟ್ ತಂತ್ರಗಳು ಮತ್ತು ಕಥೆ ಹೇಳುವ ವಿಧಾನಗಳನ್ನು ರೂಪಿಸುವುದು.',
-          'ಸ್ಕ್ರಿಪ್ಟ್ ರೈಟರ್‌ಗಳು ಮತ್ತು ವೀಡಿಯೊ ಎಡಿಟರ್‌ಗಳ ಕೆಲಸದ ಪ್ರಕ್ರಿಯೆಗಳನ್ನು ಸಂಯೋಜಿಸುವುದು.',
-          'ಪ್ರಾದೇಶಿಕ ಕಥನ, ತಂತ್ರಜ್ಞಾನ ವಿವರಣೆಗಳು ಮತ್ತು ಉದ್ಯಮ ಸಂಬಂಧಿತ ಕಂಟೆಂಟ್‌ಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುವುದು.',
-        ],
-      },
-      {
-        period: '3+ ವರ್ಷಗಳು',
-        place: 'ಫ್ರೀಲಾನ್ಸ್',
-        role: 'ಸ್ಕ್ರಿಪ್ಟ್ ರೈಟರ್',
-        points: [
-          'ಸೋಷಿಯಲ್ ಮೀಡಿಯಾ ಮತ್ತು ಡಿಜಿಟಲ್ ವೀಡಿಯೊಗಳಿಗಾಗಿ ಕಿರು ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳನ್ನು ಬರೆಯುವುದು.',
-          'ಭಾಷೆ, ಸಂಸ್ಕೃತಿ ಮತ್ತು ಸ್ಥಳೀಯ ಸಂದರ್ಭಗಳಿಗೆ ತಕ್ಕಂತೆ ಕಥೆಗಳನ್ನು ರೂಪಿಸುವುದು.',
-          'ಪ್ರೇಕ್ಷಕರನ್ನು ಸೆಳೆಯಲು ಆಕರ್ಷಕ ಆರಂಭ, ಕಥೆಯ ಹರಿವು ಮತ್ತು ಕಾಲ್ ಟು ಆಕ್ಷನ್ ರೂಪಿಸುವುದು.',
-          'ತಂತ್ರಜ್ಞಾನ, ಗ್ರಾಹಕ ಉತ್ಪನ್ನಗಳು ಮತ್ತು ಉದ್ಯಮ ಕಥನಗಳಿಗಾಗಿ ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳನ್ನು ಬರೆಯುವುದು.',
-        ],
-      },
+entries: [
+  {
+    period: 'ಪ್ರಸ್ತುತ',
+    place: 'ಸ್ವತಂತ್ರವಾಗಿ',
+    role: 'ಸೋಷಿಯಲ್ ಮೀಡಿಯಾ ಕಂಟೆಂಟ್ ಸ್ಟ್ರಾಟೆಜಿಸ್ಟ್ ಮತ್ತು ಪ್ರಾಜೆಕ್ಟ್ ಮ್ಯಾನೇಜರ್',
+    points: [
+      'ಐಡಿಯಾ ರೂಪಿಸುವುದರಿಂದ ಕಂಟೆಂಟ್ ನಿರ್ಮಾಣದವರೆಗೆ ಸೋಷಿಯಲ್ ಮೀಡಿಯಾ ಕೆಲಸಗಳನ್ನು ಯೋಜಿಸಿ ಸಂಯೋಜಿಸುವುದು.',
+      'ಡಿಜಿಟಲ್ ಪ್ರೇಕ್ಷಕರಿಗಾಗಿ ಕಂಟೆಂಟ್ ತಂತ್ರಗಳು ಮತ್ತು ಕಥೆ ಹೇಳುವ ವಿಧಾನಗಳನ್ನು ರೂಪಿಸುವುದು.',
+      'ಸ್ಕ್ರಿಪ್ಟ್ ರೈಟರ್‌ಗಳು ಮತ್ತು ವೀಡಿಯೊ ಎಡಿಟರ್‌ಗಳ ಕೆಲಸದ ಪ್ರಕ್ರಿಯೆಗಳನ್ನು ಸಂಯೋಜಿಸುವುದು.',
+      'ಪ್ರಾದೇಶಿಕ ಕಥನ, ತಂತ್ರಜ್ಞಾನ ವಿವರಣೆಗಳು ಮತ್ತು ಉದ್ಯಮ ಸಂಬಂಧಿತ ಕಂಟೆಂಟ್‌ಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುವುದು.',
     ],
+  },
+  {
+    period: '3+ ವರ್ಷಗಳು',
+    place: 'ಫ್ರೀಲಾನ್ಸ್',
+    role: 'ಸ್ಕ್ರಿಪ್ಟ್ ರೈಟರ್',
+    points: [
+      'ಸೋಷಿಯಲ್ ಮೀಡಿಯಾ ಮತ್ತು ಡಿಜಿಟಲ್ ವೀಡಿಯೊಗಳಿಗಾಗಿ ಕಿರು ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳನ್ನು ಬರೆಯುವುದು.',
+      'ಭಾಷೆ, ಸಂಸ್ಕೃತಿ ಮತ್ತು ಸ್ಥಳೀಯ ಸಂದರ್ಭಗಳಿಗೆ ತಕ್ಕಂತೆ ಕಥೆಗಳನ್ನು ರೂಪಿಸುವುದು.',
+      'ಪ್ರೇಕ್ಷಕರನ್ನು ಸೆಳೆಯಲು ಆಕರ್ಷಕ ಆರಂಭ, ಕಥೆಯ ಹರಿವು ಮತ್ತು ಕಾಲ್ ಟು ಆಕ್ಷನ್ ರೂಪಿಸುವುದು.',
+      'ತಂತ್ರಜ್ಞಾನ, ಗ್ರಾಹಕ ಉತ್ಪನ್ನಗಳು ಮತ್ತು ಉದ್ಯಮ ಕಥನಗಳಿಗಾಗಿ ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳನ್ನು ಬರೆಯುವುದು.',
+    ],
+  },
+  {
+    period: 'ಜುಲೈ 2025 – ಏಪ್ರಿಲ್ 2026',
+    place: 'Syngene International Ltd.',
+    role: 'ಸಂಶೋಧನಾ ವೃತ್ತಿಪರ',
+    points: [
+      'ಸಂಶ್ಲೇಷಣಾತ್ಮಕ ಮತ್ತು ಔಷಧೀಯ ರಸಾಯನಶಾಸ್ತ್ರದ ಪರಿಚಯದೊಂದಿಗೆ ವೈಜ್ಞಾನಿಕ ಸಂಶೋಧನಾ ವಾತಾವರಣದಲ್ಲಿ ಕೆಲಸ ಮಾಡುವುದು.',
+      'ರಸಾಯನಶಾಸ್ತ್ರ ಸಂಶೋಧನಾ ವಿಧಾನಗಳು ಮತ್ತು ಪ್ರಯೋಗಾಲಯದ ಕಾರ್ಯಪ್ರವಾಹಗಳ ಜ್ಞಾನವನ್ನು ಬಳಸುವುದು.',
+      'ಸಂಶೋಧನಾ ಅಗತ್ಯಗಳಿಗೆ ಹೊಂದಿಕೊಳ್ಳುತ್ತಾ ವೈಜ್ಞಾನಿಕ ಮತ್ತು ತಾಂತ್ರಿಕ ಕೌಶಲ್ಯಗಳನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸುವುದು.',
+    ],
+  },
+  {
+    period: 'ಡಿಸೆಂಬರ್ 2023 – ಜೂನ್ 2025',
+    place: 'Analytica Chemie Inc.',
+    role: 'ಸಂಶ್ಲೇಷಣಾತ್ಮಕ ರಸಾಯನಶಾಸ್ತ್ರ R&D',
+    points: [
+      'ಸಾವಯವ ಸಂಶ್ಲೇಷಣೆ ಮತ್ತು ಪ್ರಕ್ರಿಯೆ ಸುಧಾರಣೆಗೆ ಒತ್ತು ನೀಡಿ ಸಂಶ್ಲೇಷಣಾತ್ಮಕ ರಸಾಯನಶಾಸ್ತ್ರದ ಸಂಶೋಧನೆ ಮತ್ತು ಅಭಿವೃದ್ಧಿಯಲ್ಲಿ ಕೆಲಸ ಮಾಡುವುದು.',
+      'NMR, ಮಾಸ್ ಸ್ಪೆಕ್ಟ್ರೋಮೆಟ್ರಿ ಮತ್ತು HPLC ಸೇರಿದಂತೆ ವಿಶ್ಲೇಷಣಾತ್ಮಕ ಗುಣಲಕ್ಷಣ ನಿರ್ಧಾರ ತಂತ್ರಗಳನ್ನು ಬಳಸುವುದು.',
+      'ಪರಿಸರ, ಆರೋಗ್ಯ ಮತ್ತು ಸುರಕ್ಷತಾ (EHS) ಕ್ರಮಗಳು ಹಾಗೂ ಪ್ರಯೋಗಾಲಯದ ಸುರಕ್ಷತೆಗೆ ಆದ್ಯತೆ ನೀಡುವುದು.',
+    ],
+  },
+],
   },
   zh: {
     title: 'Résumé',

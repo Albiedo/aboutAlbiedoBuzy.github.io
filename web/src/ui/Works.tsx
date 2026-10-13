@@ -3,10 +3,26 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-import { WORKS, SECTION_COVERS, type WorkListItem, type WorkSection, type WorksLang } from '../data/works'
+import { WORKS, type WorkListItem, type WorkSection, type WorksLang } from '../data/works'
 import { getWorkDoc } from '../data/workDocs'
 
 const EASE = [0.22, 1, 0.36, 1]
+// Only display frames from videos supplied by the portfolio owner.
+// Missing local videos fall back to typography, never stock imagery.
+function ProjectVideo({ src, label, className }: { src?: string; label: string; className: string }) {
+  const [failed, setFailed] = useState(false)
+  useEffect(() => setFailed(false), [src])
+  return (
+    <div className={className}>
+      {src && !failed ? (
+        <video src={src} autoPlay muted loop playsInline preload="metadata" onError={() => setFailed(true)} aria-label={label} />
+      ) : (
+        <div className="wk-video-fallback" aria-label={label}><span>{label}</span><small>SELECTED WORK</small></div>
+      )}
+    </div>
+  )
+}
+
 
 // 极简清单的一行：作品名靠左、数据(播放量/标签)靠右、发丝线分隔；整行可点开全屏详情
 function WorkLine({ item, onOpen }: { item: WorkListItem; onOpen: (item: WorkListItem) => void }) {
@@ -41,8 +57,7 @@ function SectionCard({
   data: WorksLang
   onOpen: (item: WorkListItem) => void
 }) {
-  const [coverError, setCoverError] = useState(false)
-  const cover = SECTION_COVERS[section.id]
+  const firstVideo = section.items?.find((item) => item.video)?.video
   return (
     <div className="wk-card">
       <div className="wk-card-head">
@@ -50,15 +65,7 @@ function SectionCard({
         <h3 className="wk-card-title">{section.title}</h3>
         <span className="wk-card-tagline">{section.tagline}</span>
       </div>
-      <div className="wk-card-cover">
-        {cover && !coverError ? (
-          <img src={cover} alt="" onError={() => setCoverError(true)} />
-        ) : (
-          <div className="wk-card-cover-ph" aria-hidden="true">
-            <span className="wk-card-cover-no">{section.no}</span>
-          </div>
-        )}
-      </div>
+      <ProjectVideo src={firstVideo} label={section.title} className="wk-card-cover" />
       <SectionWorks section={section} data={data} onOpen={onOpen} />
     </div>
   )
@@ -122,15 +129,14 @@ function WorkDetail({
   data: WorksLang
   onClose: () => void
 }) {
-  const [bannerError, setBannerError] = useState(false)
   const doc = getWorkDoc(item.slug)
   const title = (doc && doc.title) || item.name
-  const banner = doc && doc.banner
+
   // 有 md 详情时展示完整信息；无 md 时详情页只保留标题 + 统一占位文案
-  const link = doc ? doc.link || item.link : null
-  const tags = doc ? doc.tags || item.tags : null
+  const link = doc?.link || item.link
+  const tags = doc?.tags || item.tags
   // 副标题不含年份；标签单独做 badge 展示
-  const sub = doc ? [item.meta, doc.role].filter(Boolean).join('  ·  ') : ''
+  const sub = [item.meta, doc?.role || item.role].filter(Boolean).join('  ·  ')
 
   return (
     <>
@@ -153,15 +159,7 @@ function WorkDetail({
           ✕
         </button>
 
-        {banner && !bannerError ? (
-          <div className="wk-detail-banner">
-            <img src={banner} alt={title} onError={() => setBannerError(true)} />
-          </div>
-        ) : (
-          <div className="wk-detail-banner is-ph" aria-hidden="true">
-            <span className="wk-detail-ph-text">{title}</span>
-          </div>
-        )}
+        <ProjectVideo src={item.video} label={title} className="wk-detail-banner" />
 
         <article className="wk-detail-article">
           <header className="wk-detail-head">
@@ -185,16 +183,7 @@ function WorkDetail({
               </ReactMarkdown>
             </div>
           ) : (
-            // 无 md：演示详情页支持的组件 —— 介绍文本 + 图片/视频占位 + 跳转按钮
-            <>
-              <p className="wk-detail-desc">{data.detailPlaceholder}</p>
-              <div className="wk-detail-ph-img" aria-hidden="true">
-                <span className="wk-detail-ph-img-label">{data.phImageLabel}</span>
-              </div>
-              <span className="wk-detail-link is-ph" role="button" aria-disabled="true">
-                {data.phButtonLabel} <span aria-hidden="true">↗</span>
-              </span>
-            </>
+            <p className="wk-detail-desc">{item.desc || data.detailPlaceholder}</p>
           )}
 
           {link && (
@@ -213,8 +202,8 @@ function WorkDetail({
   )
 }
 
-export default function Works({ lang, innerRef }: { lang: 'en' | 'zh'; innerRef: Ref<HTMLElement> }) {
-const data = WORKS[lang === 'kn' ? 'en' : lang]
+export default function Works({ lang, innerRef }: { lang: 'en' | 'kn'; innerRef: Ref<HTMLElement> }) {
+  const data = WORKS[lang]
   const sections = data.sections
   const count = sections.length
 
