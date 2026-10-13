@@ -14,7 +14,7 @@
 // ⚠️ 必须与 glb 里的时间轴 focus 空对象名一一对应、且数量 = Resume.tsx 的 entries 数。
 // 首页锚点 focus-0（或旧名 focus-start）+ 作品区 focus-works 由 Scene.tsx 自动识别，不列在这里。
 // 当前为统一命名的 5 节点 glb（focus-1…5）。改履历条数时，同步增删这里 + Resume.tsx 的 entries。
-export const FOCUS_POINTS = ['focus-1', 'focus-2', 'focus-3', 'focus-4', 'focus-5'] as const
+export const FOCUS_POINTS = ['focus-1', 'focus-2', 'focus-3', 'focus-4'] as const
 
 // 每个时间轴节点在相机动画里占的帧数（节点 k 落在第 k·FRAMES_PER_NODE 帧）。
 export const FRAMES_PER_NODE = 50
