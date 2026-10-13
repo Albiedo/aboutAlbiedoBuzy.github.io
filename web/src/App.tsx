@@ -112,7 +112,7 @@ const [lang, setLang] = useState<Lang>('en')
   const fogBg = useTransform(
     worksProgress,
     [0, 1],
-    ['rgba(8, 11, 18, 0)', 'rgba(8, 11, 18, 0.41)'] // 压暗减半（原 0.82）
+    ['rgba(56, 32, 23, 0)', 'rgba(56, 32, 23, 0.32)'] // 压暗减半（原 0.82）
   )
   const fogBlur = useTransform(worksProgress, [0, 1], ['blur(0px)', 'blur(10px)'])
   // 滚动渐暗：离开首屏后压暗 3D 场景，保证履历文字可读
@@ -140,7 +140,7 @@ const [lang, setLang] = useState<Lang>('en')
           camera={{ position: [0, 5, 19], fov: 39, near: 0.1, far: 500 }}
           gl={{ antialias: false, stencil: false, depth: true, toneMapping: THREE.ACESFilmicToneMapping }}
         >
-          <color attach="background" args={['#0a0e16']} />
+          <color attach="background" args={['#F5A15E']} />
           <Suspense fallback={null}>
             <Backdrop />
             <Scene />

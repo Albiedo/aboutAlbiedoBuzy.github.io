@@ -119,7 +119,13 @@ export const WORKS: Record<'en' | 'kn', WorksLang> = {
   },
 }
 // No remote/stock cover images. Covers come from locally supplied videos only.
-export const SECTION_COVERS: Record<string, string> = {}
+
+export const SECTION_COVERS: Record<string, string> = {
+  productions: `${import.meta.env.BASE_URL}works/covers/Sagar%20BTS%20.png`,
+  campaigns: `${import.meta.env.BASE_URL}works/covers/Sagar%20Campaigns.png`,
+  music: `${import.meta.env.BASE_URL}works/covers/Sagar%20Music.png`,
+}
+
 export function sectionCount(section: WorkSection): number {
   if (section.items) return section.items.length
   if (section.groups) return section.groups.reduce((n, g) => n + g.items.length, 0)

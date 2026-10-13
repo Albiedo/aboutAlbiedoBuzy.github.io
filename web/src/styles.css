@@ -1546,3 +1546,149 @@ canvas {
 .wk-video-fallback span { font-family: 'Cormorant Upright', serif; font-size: clamp(22px, 2.4vw, 42px); line-height: 1.05; }
 .wk-video-fallback small { font: 10px system-ui, sans-serif; letter-spacing: .25em; opacity: .55; }
 .wk-detail-banner .wk-video-fallback { min-height: clamp(180px, 42vh, 460px); }
+
+
+/* SOFT SUNSET ORANGE + CLAY WORKS — REVIEW ONLY */
+/* Color-only overrides: deliberately do not edit font-family, sizing, layout,
+   3D animation clips, sticker objects, or scrolling behavior. */
+:root {
+  --ink: #382017;
+  --muted: rgba(56, 32, 23, .72);
+  --panel: rgba(255, 242, 218, .88);
+  --line: rgba(56, 32, 23, .25);
+  --sunset: #F5A15E;
+  --sunset-light: #FFD1A8;
+  --espresso: #382017;
+  --cream: #FFF2DA;
+  --terracotta: #963F1A;
+}
+html, body, #root { background: var(--sunset); color: var(--ink); }
+/* The 3D gradient is drawn in Scene.tsx; the fallback here matches it. */
+.scene-bg { background: var(--sunset); }
+.scrim { background: linear-gradient(to right,
+  rgba(255,242,218,0) 20%, rgba(255,242,218,.25) 58%, rgba(255,242,218,.48) 92%); }
+.glass-rail { background: rgba(255,242,218,.17); }
+.hero-gradient { background: linear-gradient(to top, rgba(255,204,151,.36), transparent); }
+.hero-frame { border-color: rgba(56,32,23,.21); }
+.hero-mark { color: rgba(56,32,23,.65); }
+.hero-meta { color: rgba(56,32,23,.72); }
+.hero-meta .hm-name { color: rgba(56,32,23,.88); }
+.scroll-cue-track, .tl-line { background-image: linear-gradient(rgba(56,32,23,.48),rgba(56,32,23,.07)); }
+.scroll-cue-dot, .tl-dot { background: var(--terracotta); }
+.about-link { border-bottom-color: rgba(56,32,23,.55); }
+.about-link:hover, .lang-toggle:hover { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+.lang-toggle { color: var(--espresso); background: rgba(255,242,218,.78); border-color: rgba(56,32,23,.3); }
+.lang-toggle:hover { background: rgba(255,242,218,.95); }
+/* Four Works cards all use the approved "Made to be heard" terracotta. */
+.works { --ink: #29160F; --muted: rgba(41,22,15,.76); --line: rgba(41,22,15,.28); }
+.wk-card { background: #B97151; color: #29160F; }
+.wk-card-no, .wk-foot-label { color: rgba(41,22,15,.67); }
+.wk-line { border-bottom-color: rgba(41,22,15,.18); }
+.wk-line-name { color: #29160F; }
+.wk-line-btn:hover .wk-line-name, .wk-line-btn:focus-visible .wk-line-name { color: #FFF2DA; }
+.wk-line-num, .wk-foot-val.accent { color: #29160F; }
+.wk-line-tag, .wk-line-tag::before { color: rgba(41,22,15,.72); }
+.wk-progress { background: rgba(41,22,15,.3); }
+.wk-progress-fill { background: #29160F; }
+.wk-card-cover, .wk-card-cover-ph { background: #C88C70; }
+.wk-card-cover-ph { background-image: radial-gradient(circle at 30% 20%, #DFAD8A, #B97151 90%); }
+.wk-card-cover-no { color: rgba(41,22,15,.55); }
+.wk-video-fallback { background: radial-gradient(circle at 25% 15%,rgba(255,242,218,.45),transparent 65%), #B97151; }
+.wk-video-fallback span, .wk-video-fallback small { color: #29160F; }
+/* Detail modal uses espresso/cream for accessible contrast against the clay cards. */
+.wk-detail { --ink: #FFF2DA; --muted: rgba(255,242,218,.72); --line: rgba(255,242,218,.28); background: #382017; color: #FFF2DA; }
+.wk-detail-banner, .wk-detail-ph-img { background-color: #59301e; }
+.wk-detail-backdrop { background: rgba(29,15,10,.77); }
+.wk-detail .wk-line-btn, .wk-detail-close { color: #FFF2DA; }
+.wk-badge { border-color: rgba(255,242,218,.4); color: #FFF2DA; }
+.wk-detail-link:not(.is-ph) { color: #FFCE9E; }
+/* Warm rather than blue-black mobile résumé card. */
+@media (max-width: 640px) {
+  .tl-body { background: rgba(255,242,218,.77); color: var(--espresso); }
+}
+.loading-screen { background: #382017; }
+.lr-track { stroke: rgba(255,242,218,.24); }
+.lr-arc { stroke: #F5A15E; filter: drop-shadow(0 0 6px rgba(245,161,94,.48)); }
+
+/* ABOUT ALBIEDO — WARM ESPRESSO RESUME THEME */
+
+.resume .resume-title,
+.resume .tl-period,
+.resume .tl-place,
+.resume .tl-role,
+.resume .tl-points li,
+.resume .tl-group-head,
+.resume .tl-group-sub,
+.resume .tl-group-head a {
+  color: #2B1B16;
+}
+
+/* Timeline bullet symbols */
+.resume .tl-points li::before {
+  color: #684537;
+}
+
+/* Timeline markers */
+.resume .tl-dot {
+  background-color: #684537;
+}
+
+/* Timeline connecting line */
+.resume .timeline::before {
+  background: rgba(43, 27, 22, 0.45);
+}
+
+/* IN THE MAKING — TEXT-ONLY LAYOUT */
+
+.wk-card-upcoming {
+  gap: clamp(18px, 3vh, 32px);
+}
+
+.wk-card-upcoming .wk-card-body {
+  margin-top: 0;
+  width: 100%;
+}
+
+.wk-card-upcoming .wk-list {
+  margin-top: 0;
+}
+
+/* IN THE MAKING — REMOVE UNUSED IMAGE SPACE */
+
+.wk-card-upcoming {
+  gap: 0 !important;
+}
+
+.wk-card-upcoming .wk-card-head {
+  margin-bottom: 20px !important;
+}
+
+.wk-card-upcoming .wk-card-cover {
+  display: none !important;
+}
+
+.wk-card-upcoming .wk-card-body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+}
+
+.wk-card-upcoming .wk-list {
+  margin: 0 !important;
+}
+
+/* WORKS — TRANSLUCENT TERRACOTTA SLATES */
+
+
+/* WORKS — DARKER, MORE TRANSPARENT TERRACOTTA */
+
+
+/* WORKS — DEEP COCOA BROWN, MORE TRANSPARENT */
+
+.works .wk-card {
+  background: rgba(99, 59, 44, 0.35) !important;
+
+  backdrop-filter: blur(14px) saturate(80%);
+  -webkit-backdrop-filter: blur(14px) saturate(80%);
+}
+

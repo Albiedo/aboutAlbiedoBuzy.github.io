@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-import { WORKS, type WorkListItem, type WorkSection, type WorksLang } from '../data/works'
+import { WORKS, SECTION_COVERS, type WorkListItem, type WorkSection, type WorksLang } from '../data/works'
 import { getWorkDoc } from '../data/workDocs'
 
 const EASE = [0.22, 1, 0.36, 1]
@@ -48,6 +48,7 @@ function WorkLine({ item, onOpen }: { item: WorkListItem; onOpen: (item: WorkLis
 }
 
 // 一张全高板块卡：左侧整高配图，右侧文字（编号 + 标题 + 清单）
+
 function SectionCard({
   section,
   data,
@@ -57,19 +58,55 @@ function SectionCard({
   data: WorksLang
   onOpen: (item: WorkListItem) => void
 }) {
-  const firstVideo = section.items?.find((item) => item.video)?.video
+  const firstVideo = section.items?.find(
+    (item) => item.video
+  )?.video
+
+  const cover = SECTION_COVERS[section.id]
+  const isUpcoming = section.id === 'upcoming'
+
   return (
-    <div className="wk-card">
+    <div
+      className={`wk-card ${
+        isUpcoming ? 'wk-card-upcoming' : ''
+      }`}
+    >
       <div className="wk-card-head">
         <span className="wk-card-no">{section.no}</span>
-        <h3 className="wk-card-title">{section.title}</h3>
-        <span className="wk-card-tagline">{section.tagline}</span>
+        <h3 className="wk-card-title">
+          {section.title}
+        </h3>
+        <span className="wk-card-tagline">
+          {section.tagline}
+        </span>
       </div>
-      <ProjectVideo src={firstVideo} label={section.title} className="wk-card-cover" />
-      <SectionWorks section={section} data={data} onOpen={onOpen} />
+
+      {!isUpcoming && (
+        cover ? (
+          <div className="wk-card-cover">
+            <img
+              src={cover}
+              alt={`${section.title} cover`}
+            />
+          </div>
+        ) : (
+          <ProjectVideo
+            src={firstVideo}
+            label={section.title}
+            className="wk-card-cover"
+          />
+        )
+      )}
+
+      <SectionWorks
+        section={section}
+        data={data}
+        onOpen={onOpen}
+      />
     </div>
   )
 }
+
 
 // 板块内的作品清单（items 扁平 / groups 分组 / awards · footer 底部小字）
 function SectionWorks({
