@@ -85,7 +85,7 @@ function IntroContrastSampler() {
         }
       }
     }
-  }, 2)
+  })
 
   return null
 }
@@ -226,7 +226,7 @@ const [lang, setLang] = useState<Lang>('en')
           shadows={{ type: THREE.PCFShadowMap }}
           dpr={[1, 1.5]}
           camera={{ position: [0, 5, 19], fov: 39, near: 0.1, far: 500 }}
-          gl={{ antialias: false, stencil: false, depth: true, toneMapping: THREE.ACESFilmicToneMapping }}
+          gl={{ antialias: false, stencil: false, depth: true, toneMapping: THREE.ACESFilmicToneMapping, preserveDrawingBuffer: true }}
         >
           <color attach="background" args={['#F5A15E']} />
           <Suspense fallback={null}>
