@@ -58,24 +58,27 @@ function Hero({ lang, cueOpacity }: { lang: Lang; cueOpacity: MotionValue<number
   const titleSpacing = useTransform(scrollYProgress, [0, 1], ['0.01em', '0.42em'])
   return (
     <section className="hero">
-      <motion.div
-        className="about"
-        lang={lang}
-        ref={aboutRef}
-        style={{ filter: blur, opacity }}
-      >
-        {/* 入场动画放内层，避免其 fill 锁住 opacity 覆盖外层滚动 opacity */}
+      <div className="about" lang={lang} ref={aboutRef}>
         <div className="about-intro">
-          <motion.h1 className="about-title" style={{ y: titleY, letterSpacing: titleSpacing }}>
-            {title}
-          </motion.h1>
+          <div className="about-title-reveal">
+            <motion.h1
+              className="about-title"
+              style={{ y: titleY, letterSpacing: titleSpacing, filter: blur, opacity }}
+            >
+              {title}
+            </motion.h1>
+          </div>
           {paragraphs.map((p, i) => (
-            <motion.p key={i} className="about-body" style={{ y: bodyY }}>
+            <motion.p
+              key={i}
+              className="about-body"
+              style={{ y: bodyY, filter: blur, opacity }}
+            >
               {p}
             </motion.p>
           ))}
         </div>
-      </motion.div>
+      </div>
       <motion.div className="scroll-cue" style={{ opacity: cueOpacity }} aria-hidden="true">
         <span className="scroll-cue-label">{lang === 'en' ? 'SCROLL' : '向下滚动'}</span>
         <span className="scroll-cue-track">

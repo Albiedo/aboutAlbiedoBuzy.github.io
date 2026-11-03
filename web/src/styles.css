@@ -1692,3 +1692,27 @@ html, body, #root { background: var(--sunset); color: var(--ink); }
   -webkit-backdrop-filter: blur(14px) saturate(80%);
 }
 
+
+/* The introduction responds to the actual animated background.
+   Keep the hero text outside isolated ancestor stacking contexts so its
+   difference blend can see the 3D canvas, while résumé and works stay above
+   their existing scrims. The heading retains its original entrance animation. */
+.content { z-index: auto; }
+.resume { position: relative; z-index: 10; }
+.about-intro { animation: none; }
+.about-title-reveal { position: relative; z-index: 10; animation: fadeDown 1.8s ease both; }
+.hero .scroll-cue { position: relative; z-index: 10; }
+.hero .about-body {
+  position: relative;
+  z-index: 10;
+  color: #fff;
+  mix-blend-mode: difference;
+  animation: adaptiveIntroColor 1.8s ease both;
+}
+@keyframes adaptiveIntroColor {
+  from { color: rgba(255, 255, 255, 0); }
+  to { color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-title-reveal, .hero .about-body { animation: none; }
+}
