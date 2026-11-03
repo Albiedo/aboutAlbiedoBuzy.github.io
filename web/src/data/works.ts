@@ -61,11 +61,11 @@ export const WORKS: Record<'en' | 'kn', WorksLang> = {
       {
       id: 'upcoming', no: '04', title: 'In the Making', tagline: 'Five upcoming ventures',
       items: [
+        { name: 'Bengaluru Untold', slug: 'bengaluru-untold', meta: 'Storytelling IP · Bengaluru', desc: 'An original IP uncovering the untold stories and culture of Bengaluru through modern storytelling and narration, imagining how the city would live and behave if it were a person in today’s society.' },
+        { name: 'Three Much', slug: 'three-much', meta: 'Comedy channel', desc: 'An upcoming comedy channel.' },
         { name: 'Creators & Co.', slug: 'creators-and-co', meta: 'In development', desc: 'A production company built for creators.' },
-        { name: 'Business Stories Explainer', slug: 'business-explainers', meta: 'Name to be announced', desc: 'An upcoming channel exploring and explaining business stories.' },
-        { name: 'Trio Tales', slug: 'trio-tales', meta: 'Comedy channel', desc: 'An upcoming comedy channel.' },
-        { name: 'Guitar Learning Channel', slug: 'guitar-learning', meta: 'YouTube · Education', desc: 'An upcoming YouTube channel for learning guitar.' },
-        { name: 'Guesstimato', slug: 'guesstimato', meta: 'Business guessing game · Under 60s', desc: 'A host asks local businesses four or five questions, guesses their monthly or annual turnover, then reveals only whether the guess was correct — never the actual amount. Every video is under 60 seconds.' }
+        { name: 'Guesstimato', slug: 'guesstimato', meta: 'Business guessing game · Under 60s', desc: 'A host asks local businesses four or five questions, guesses their monthly or annual turnover, then reveals only whether the guess was correct — never the actual amount. Every video is under 60 seconds.' },
+        { name: 'Business Stories Explainer', slug: 'business-explainers', meta: 'Name to be announced', desc: 'An upcoming channel exploring and explaining business stories.' }
       ],
       footer: 'Concepts in development — not yet launched.',
     }
@@ -109,11 +109,11 @@ export const WORKS: Record<'en' | 'kn', WorksLang> = {
       {
       id: 'upcoming', no: '04', title: 'ರೂಪುಗೊಳ್ಳುತ್ತಿರುವ ಯೋಜನೆಗಳು', tagline: 'ಐದು ಮುಂಬರುವ ಯೋಜನೆಗಳು',
       items: [
+        { name: 'Bengaluru Untold', slug: 'bengaluru-untold', meta: 'ಕಥನ ಐಪಿ · ಬೆಂಗಳೂರು', desc: 'ಬೆಂಗಳೂರಿನ ಹೇಳದ ಕಥೆಗಳು, ಸಂಸ್ಕೃತಿ ಮತ್ತು ಅಜ್ಞಾತ ಮುಖಗಳನ್ನು ಆಧುನಿಕ ಕಥನ ಹಾಗೂ ನಿರೂಪಣೆಯ ಮೂಲಕ ಪರಿಚಯಿಸುವ ಐಪಿ. ಬೆಂಗಳೂರು ಒಬ್ಬ ಮನುಷ್ಯನಾಗಿದ್ದರೆ ಇಂದಿನ ಸಮಾಜದಲ್ಲಿ ಹೇಗಿರುತ್ತಿತ್ತು ಎಂಬ ದೃಷ್ಟಿಕೋನದಿಂದ ನಗರದ ಕಥೆಗಳನ್ನು ಹೇಳುತ್ತದೆ.' },
+        { name: 'Three Much', slug: 'three-much', meta: 'ಹಾಸ್ಯ ಚಾನೆಲ್', desc: 'ಮುಂಬರುವ ಹಾಸ್ಯ ಚಾನೆಲ್.' },
         { name: 'Creators & Co.', slug: 'creators-and-co', meta: 'ಅಭಿವೃದ್ಧಿಯಲ್ಲಿದೆ', desc: 'ಕಂಟೆಂಟ್ ಕ್ರಿಯೇಟರ್\u200cಗಳಿಗಾಗಿ ನಿರ್ಮಾಣ ಸಂಸ್ಥೆ.' },
-        { name: 'ಉದ್ಯಮ ಕಥೆಗಳ ವಿವರಣೆ', slug: 'business-explainers', meta: 'ಹೆಸರು ಇನ್ನೂ ನಿಗದಿಯಾಗಿಲ್ಲ', desc: 'ಉದ್ಯಮ ಕಥೆಗಳನ್ನು ವಿವರಿಸುವ ಹೊಸ ಚಾನೆಲ್.' },
-        { name: 'Trio Tales', slug: 'trio-tales', meta: 'ಹಾಸ್ಯ ಚಾನೆಲ್', desc: 'ಮುಂಬರುವ ಹಾಸ್ಯ ಚಾನೆಲ್.' },
-        { name: 'ಗಿಟಾರ್ ಕಲಿಕೆ ಚಾನೆಲ್', slug: 'guitar-learning', meta: 'ಯೂಟ್ಯೂಬ್ · ಶಿಕ್ಷಣ', desc: 'ಗಿಟಾರ್ ಕಲಿಯಲು ಮುಂಬರುವ ಯೂಟ್ಯೂಬ್ ಚಾನೆಲ್.' },
-        { name: 'Guesstimato', slug: 'guesstimato', meta: 'ಉದ್ಯಮ ಊಹೆ · 60 ಸೆಕೆಂಡ್ ಒಳಗೆ', desc: 'ನಿರೂಪಕರು ಸ್ಥಳೀಯ ಉದ್ಯಮಗಳಿಗೆ ನಾಲ್ಕೈದು ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ ಮಾಸಿಕ ಅಥವಾ ವಾರ್ಷಿಕ ವಹಿವಾಟನ್ನು ಊಹಿಸುತ್ತಾರೆ. ನಿಖರ ಮೊತ್ತವನ್ನು ಹೇಳದೆ, ಊಹೆ ಸರಿಯೋ ತಪ್ಪೋ ಮಾತ್ರ ತಿಳಿಸುತ್ತಾರೆ. ಪ್ರತಿಯೊಂದು ವೀಡಿಯೊ 60 ಸೆಕೆಂಡ್\u200cಗಳೊಳಗೆ.' }
+        { name: 'Guesstimato', slug: 'guesstimato', meta: 'ಉದ್ಯಮ ಊಹೆ · 60 ಸೆಕೆಂಡ್ ಒಳಗೆ', desc: 'ನಿರೂಪಕರು ಸ್ಥಳೀಯ ಉದ್ಯಮಗಳಿಗೆ ನಾಲ್ಕೈದು ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ ಮಾಸಿಕ ಅಥವಾ ವಾರ್ಷಿಕ ವಹಿವಾಟನ್ನು ಊಹಿಸುತ್ತಾರೆ. ನಿಖರ ಮೊತ್ತವನ್ನು ಹೇಳದೆ, ಊಹೆ ಸರಿಯೋ ತಪ್ಪೋ ಮಾತ್ರ ತಿಳಿಸುತ್ತಾರೆ. ಪ್ರತಿಯೊಂದು ವೀಡಿಯೊ 60 ಸೆಕೆಂಡ್\u200cಗಳೊಳಗೆ.' },
+        { name: 'ಉದ್ಯಮ ಕಥೆಗಳ ವಿವರಣೆ', slug: 'business-explainers', meta: 'ಹೆಸರು ಇನ್ನೂ ನಿಗದಿಯಾಗಿಲ್ಲ', desc: 'ಉದ್ಯಮ ಕಥೆಗಳನ್ನು ವಿವರಿಸುವ ಹೊಸ ಚಾನೆಲ್.' }
       ],
       footer: 'ಅಭಿವೃದ್ಧಿಯಲ್ಲಿರುವ ಪರಿಕಲ್ಪನೆಗಳು — ಇನ್ನೂ ಆರಂಭವಾಗಿಲ್ಲ.',
     }
