@@ -1,5 +1,5 @@
 import { Suspense, useRef, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
 import * as THREE from 'three'
 import Scene from './scene/Scene'
@@ -8,6 +8,87 @@ import Resume from './ui/Resume'
 import Works from './ui/Works'
 import LoadingScreen from './ui/LoadingScreen'
 import { useStore } from './store'
+
+
+/**
+ * Samples the rendered 3D scene beneath each word of the introduction.
+ * Unlike mix-blend-mode, this switches between two exact text colors:
+ * espresso on light pixels and pure white on dark pixels.
+ * One GPU readback per visible text line keeps the cost low on mobile.
+ */
+function IntroContrastSampler() {
+  const { gl } = useThree()
+  const lastSample = useRef(0)
+
+  // Run immediately after the post-processing composer has drawn the scene.
+  useFrame((state) => {
+    if (state.clock.elapsedTime - lastSample.current < 0.2) return
+    lastSample.current = state.clock.elapsedTime
+
+    const paragraph = document.querySelector<HTMLElement>('.hero .about-body')
+    if (!paragraph) return
+    const bounds = paragraph.getBoundingClientRect()
+    if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) return
+
+    const canvas = gl.domElement
+    const rect = canvas.getBoundingClientRect()
+    if (!rect.width || !rect.height) return
+
+    const xScale = canvas.width / rect.width
+    const yScale = canvas.height / rect.height
+    const lines = new Map<number, Array<{ element: HTMLElement; x: number }>>()
+
+    for (const element of paragraph.querySelectorAll<HTMLElement>('.intro-contrast-word')) {
+      const word = element.getBoundingClientRect()
+      const x = Math.floor((word.left + word.width / 2 - rect.left) * xScale)
+      const y = Math.floor((rect.bottom - (word.top + word.height / 2)) * yScale)
+      if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue
+      const line = lines.get(y) ?? []
+      line.push({ element, x })
+      lines.set(y, line)
+    }
+
+    const context = gl.getContext()
+    if (context.isContextLost()) return
+    const linear = (v: number) => {
+      const c = v / 255
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    }
+
+    for (const [y, words] of lines) {
+      const xs = words.map(({ x }) => x)
+      const left = Math.min(...xs)
+      const length = Math.max(...xs) - left + 1
+      const pixels = new Uint8Array(length * 4)
+
+      try {
+        context.readPixels(left, y, length, 1, context.RGBA, context.UNSIGNED_BYTE, pixels)
+      } catch {
+        continue // Keep the original brown if framebuffer sampling is unavailable.
+      }
+
+      for (const { element, x } of words) {
+        const index = (x - left) * 4
+        if (pixels[index + 3] === 0) continue
+        const luminance =
+          0.2126 * linear(pixels[index]) +
+          0.7152 * linear(pixels[index + 1]) +
+          0.0722 * linear(pixels[index + 2])
+
+        // Small hysteresis avoids flickering when the animated model moves.
+        const wasWhite = element.dataset.contrast === 'white'
+        const white = luminance < (wasWhite ? 0.28 : 0.22)
+        const next = white ? 'white' : 'brown'
+        if (element.dataset.contrast !== next) {
+          element.dataset.contrast = next
+          element.style.color = white ? '#FFFFFF' : '#382017'
+        }
+      }
+    }
+  }, 2)
+
+  return null
+}
 
 function Backdrop() {
   // 点击空白处收起详情
@@ -74,7 +155,11 @@ function Hero({ lang, cueOpacity }: { lang: Lang; cueOpacity: MotionValue<number
               className="about-body"
               style={{ y: bodyY, filter: blur, opacity }}
             >
-              {p}
+              {p.split(/(\s+)/).map((part, j) =>
+                /^\s+$/.test(part)
+                  ? part
+                  : <span className="intro-contrast-word" key={j}>{part}</span>
+              )}
             </motion.p>
           ))}
         </div>
@@ -147,6 +232,7 @@ const [lang, setLang] = useState<Lang>('en')
           <Suspense fallback={null}>
             <Backdrop />
             <Scene />
+            <IntroContrastSampler />
           </Suspense>
         </Canvas>
       </div>

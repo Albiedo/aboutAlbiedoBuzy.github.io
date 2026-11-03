@@ -1702,17 +1702,21 @@ html, body, #root { background: var(--sunset); color: var(--ink); }
 .about-intro { animation: none; }
 .about-title-reveal { position: relative; z-index: 10; animation: fadeDown 1.8s ease both; }
 .hero .scroll-cue { position: relative; z-index: 10; }
+/* Only the introductory paragraph gets the larger, responsive type and
+   true two-state contrast. Its individual words follow the 3D backdrop. */
 .hero .about-body {
   position: relative;
   z-index: 10;
-  color: #fff;
-  mix-blend-mode: difference;
-  animation: adaptiveIntroColor 1.8s ease both;
+  color: #382017;
+  mix-blend-mode: normal;
+  animation: none;
+  font-size: clamp(12px, calc(1.05vw + 3px), 19px);
 }
-@keyframes adaptiveIntroColor {
-  from { color: rgba(255, 255, 255, 0); }
-  to { color: #fff; }
+.hero .intro-contrast-word {
+  color: #382017;
+  transition: color 0.1s linear;
 }
 @media (prefers-reduced-motion: reduce) {
-  .about-title-reveal, .hero .about-body { animation: none; }
+  .about-title-reveal { animation: none; }
+  .hero .intro-contrast-word { transition: none; }
 }
