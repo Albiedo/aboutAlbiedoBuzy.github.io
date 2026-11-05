@@ -303,6 +303,13 @@ function SagarAvatarAndCamera({
     const from = firstIndex < 0 ? HOME : poses[firstIndex]
     const to = secondIndex < 0 ? HOME : poses[secondIndex]
     const center = centerRef.current.copy(from.center).lerp(to.center, fraction)
+    // The two opposite-side camera moves cross the face. A straight line
+    // between decal centers passes through the head, leaving the depth-of-field
+    // focused inside the model halfway through the turn. Follow a shallow
+    // front-of-face arc instead so the camera never deliberately defocuses.
+    const changesFaceSide = firstIndex >= 0 && secondIndex > firstIndex &&
+      Math.sign(from.center.x) !== Math.sign(to.center.x)
+    if (changesFaceSide) center.z += 0.105 * Math.sin(Math.PI * fraction)
     let azimuth = THREE.MathUtils.lerp(from.azimuth, to.azimuth, fraction)
     let distance = THREE.MathUtils.lerp(from.distance, to.distance, fraction)
     let fov = THREE.MathUtils.lerp(from.fov, to.fov, fraction)
