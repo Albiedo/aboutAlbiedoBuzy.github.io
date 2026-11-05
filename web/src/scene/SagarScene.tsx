@@ -119,42 +119,43 @@ function Lights() {
   </>
 }
 
-// Never hold a fixed pose over a scroll interval: no dead zones or snapping.
-function scrollEase(value: number) {
-  const t = THREE.MathUtils.clamp(value, 0, 1)
-  const smooth = t * t * (3 - 2 * t)
-  return 0.38 * t + 0.62 * smooth
-}
+/**
+ * Scroll-to-pose timeline. Geometry is measured only when the page layout changes,
+ * not 60-120 times a second. Linear travel avoids a stall at every career marker;
+ * the damped camera supplies the easing instead.
+ */
+type ScrollLayout = { tops: number[]; galleryTop: number; valid: boolean }
 
-/** -1 = hero, 0..3 = four exact career stops. Continuous and reversible. */
-function timelineProgress() {
-  const anchors = CAREER_STOPS.map(({ point }) =>
-    document.querySelector<HTMLElement>(`[data-point="${point}"]`)
-  )
-  if (anchors.some((a) => !a)) return -1
+function timelineProgress(layout: ScrollLayout) {
+  if (!layout.valid || layout.tops.length !== CAREER_STOPS.length) return -1
+  const tops = layout.tops
   const viewport = Math.max(1, window.innerHeight)
-  const tops = anchors.map((a) => a!.getBoundingClientRect().top + window.scrollY)
   const cursor = window.scrollY + viewport * 0.30
   if (cursor <= tops[0]) {
-    const travel = Math.max(1, tops[0] - viewport * 0.30)
-    return -1 + scrollEase(window.scrollY / travel)
+    const heroTravel = Math.max(1, tops[0] - viewport * 0.30)
+    return -1 + THREE.MathUtils.clamp(window.scrollY / heroTravel, 0, 1)
   }
   for (let i = 0; i < tops.length - 1; i++) {
     if (cursor <= tops[i + 1]) {
-      const fraction = (cursor - tops[i]) / Math.max(1, tops[i + 1] - tops[i])
-      return i + scrollEase(fraction)
+      const fraction = THREE.MathUtils.clamp(
+        (cursor - tops[i]) / Math.max(1, tops[i + 1] - tops[i]), 0, 1,
+      )
+      return i + fraction
     }
   }
   return CAREER_STOPS.length - 1
 }
 
-/** Two-phase gallery transition from Sen's original: entrance pan + pinned drift. */
-function worksProgress() {
-  const gallery = document.querySelector<HTMLElement>('.wk-gallery')
-  if (!gallery) return { entrance: 0, drift: 0 }
-  const top = gallery.getBoundingClientRect().top
-  const entrance = scrollEase(1 - top / Math.max(1, window.innerHeight))
-  const drift = scrollEase(-top / Math.max(1, window.innerWidth))
+/** Gallery entrance is continuous with the résumé end, then keeps drifting left. */
+function worksProgress(layout: ScrollLayout) {
+  if (!Number.isFinite(layout.galleryTop)) return { entrance: 0, drift: 0 }
+  const top = layout.galleryTop - window.scrollY
+  const entrance = THREE.MathUtils.smoothstep(
+    1 - top / Math.max(1, window.innerHeight), 0, 1,
+  )
+  const drift = THREE.MathUtils.smoothstep(
+    -top / Math.max(1, window.innerWidth), 0, 1,
+  )
   return { entrance, drift }
 }
 
@@ -185,6 +186,40 @@ function SagarAvatarAndCamera({
   const centerRef = useRef(new THREE.Vector3())
   const aimRef = useRef(new THREE.Vector3())
   const desiredPosRef = useRef(new THREE.Vector3())
+  const scrollLayout = useRef<ScrollLayout>({ tops: [], galleryTop: Number.NaN, valid: false })
+
+  useEffect(() => {
+    const measure = () => {
+      const anchors = CAREER_STOPS.map(({ point }) =>
+        document.querySelector<HTMLElement>(`[data-point="${point}"]`)
+      )
+      const gallery = document.querySelector<HTMLElement>('.wk-gallery')
+      scrollLayout.current = {
+        tops: anchors.every(Boolean) ? anchors.map((node) =>
+          node!.getBoundingClientRect().top + window.scrollY
+        ) : [],
+        galleryTop: gallery ? gallery.getBoundingClientRect().top + window.scrollY : Number.NaN,
+        valid: anchors.every(Boolean),
+      }
+    }
+    measure()
+    // Résumé translation and gallery track width can change the document layout.
+    const observer = new ResizeObserver(measure)
+    const resume = document.querySelector<HTMLElement>('.resume')
+    const gallery = document.querySelector<HTMLElement>('.wk-gallery')
+    if (resume) observer.observe(resume)
+    if (gallery) observer.observe(gallery)
+    window.addEventListener('resize', measure)
+    window.addEventListener('load', measure)
+    const nextFrame = requestAnimationFrame(measure)
+    return () => {
+      cancelAnimationFrame(nextFrame)
+      observer.disconnect()
+      window.removeEventListener('resize', measure)
+      window.removeEventListener('load', measure)
+    }
+  }, [])
+
   const { avatar, poses } = useMemo(() => {
     const avatar = scene.clone(true)
     avatar.updateMatrixWorld(true)
@@ -199,12 +234,39 @@ function SagarAvatarAndCamera({
       }
     })
     avatar.traverse((obj) => {
-      if (obj instanceof THREE.Mesh) {
-        // Allow frustum culling for the large avatar while keeping the small decals stable.
-        obj.frustumCulled = obj.geometry.getAttribute('position')?.count > 100000
-        obj.castShadow = false
-        obj.receiveShadow = false
+      if (!(obj instanceof THREE.Mesh)) return
+      // Decals are mapped directly onto skin: retain their original geometry and art.
+      // glTF incorrectly marks several RGBA cat images OPAQUE, which causes bright
+      // rectangular patches and fringing. Alpha blend the originals instead.
+      const isSticker = obj.name.startsWith('DECAL_') || obj.name.startsWith('Sticker ')
+      if (isSticker) {
+        const original = Array.isArray(obj.material) ? obj.material : [obj.material]
+        const fixed = original.map((source) => {
+          const mat = source.clone()
+          if (mat instanceof THREE.MeshStandardMaterial ||
+              mat instanceof THREE.MeshBasicMaterial ||
+              mat instanceof THREE.MeshPhysicalMaterial) {
+            mat.transparent = true
+            mat.alphaTest = 0.025
+            mat.depthTest = true
+            mat.depthWrite = false
+            mat.side = THREE.DoubleSide
+            // Resolve tattoo/skin z-fighting without moving tattoos off the skin.
+            mat.polygonOffset = true
+            mat.polygonOffsetFactor = -2
+            mat.polygonOffsetUnits = -3
+            mat.needsUpdate = true
+          }
+          return mat
+        })
+        obj.material = Array.isArray(obj.material) ? fixed : fixed[0]
+        obj.renderOrder = 4
+        obj.frustumCulled = false
+      } else {
+        obj.frustumCulled = false
       }
+      obj.castShadow = false
+      obj.receiveShadow = false
     })
     return { avatar, poses }
   }, [scene])
@@ -218,7 +280,7 @@ function SagarAvatarAndCamera({
   }, [poses])
 
   useFrame((state, delta) => {
-    const scroll = timelineProgress()
+    const scroll = timelineProgress(scrollLayout.current)
     const firstIndex = Math.floor(scroll)
     const secondIndex = Math.min(CAREER_STOPS.length - 1, firstIndex + 1)
     const fraction = scroll - firstIndex
@@ -231,7 +293,7 @@ function SagarAvatarAndCamera({
     let elevation = THREE.MathUtils.lerp(from.elevation, to.elevation, fraction)
     let frameRight = THREE.MathUtils.lerp(from.frameRight, to.frameRight, fraction)
 
-    const works = worksProgress()
+    const works = worksProgress(scrollLayout.current)
     if (works.entrance > 0) {
       const k = works.entrance
       center.lerp(WORKS.center, k)
@@ -260,7 +322,8 @@ function SagarAvatarAndCamera({
     const perspective = state.camera as THREE.PerspectiveCamera
     const desiredFov = fov + (mobile ? 4 : 0)
     // Damping is time-based, so behavior is stable on 30, 60, and 120 Hz displays.
-    const follow = 1 - Math.exp(-9.5 * Math.min(delta, 0.08))
+    // One rate-independent spring for the complete transform, no snapped stop frames.
+    const follow = 1 - Math.exp(-12.0 * Math.min(delta, 0.08))
     const previousFov = perspective.fov
     if (!initialized.current) {
       perspective.position.copy(desired)
@@ -279,9 +342,10 @@ function SagarAvatarAndCamera({
     // Restore Sen's real selective DoF: focus the active sticker, soften other depths.
     const careerWeight = THREE.MathUtils.smoothstep(scroll, -0.72, -0.02) * (1 - works.entrance)
     focusRef.current.lerp(center, follow)
-    bokehRef.current = THREE.MathUtils.lerp(bokehRef.current, 11.5 * careerWeight, follow)
+    // Intentionally blur distant face/hair elements, not the active cat decal itself.
+    bokehRef.current = THREE.MathUtils.lerp(bokehRef.current, 8.5 * careerWeight, follow)
     focusRangeRef.current = THREE.MathUtils.lerp(
-      focusRangeRef.current, THREE.MathUtils.lerp(0.40, 0.024, careerWeight), follow,
+      focusRangeRef.current, THREE.MathUtils.lerp(0.40, 0.058, careerWeight), follow,
     )
   })
 
@@ -308,7 +372,7 @@ function CareerDepthOfField({
     <EffectComposer multisampling={0} stencilBuffer={false} depthBuffer>
       <DepthOfField
         ref={effectRef} target={[0, 0.6, 0]}
-        worldFocusRange={0.024} bokehScale={11.5} height={480}
+        worldFocusRange={0.058} bokehScale={8.5} height={480}
       />
       <SMAA />
     </EffectComposer>
