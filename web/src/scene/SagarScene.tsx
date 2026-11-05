@@ -32,23 +32,23 @@ type CareerStop = {
 const CAREER_STOPS: readonly CareerStop[] = [
   {
     point: FOCUS_POINTS[0], label: 'Independent — Social Media Content Strategist & Project Manager',
-    node: 'DECAL_06_SocialMediaCat_Career', azimuth: -69, distance: 0.70,
-    fov: 29, elevation: 0.084, frameRight: 0.105,
+    node: 'DECAL_06_SocialMediaCat_Career', azimuth: -55, distance: 0.83,
+    fov: 29, elevation: 0.08, frameRight: 0.12,
   },
   {
     point: FOCUS_POINTS[1], label: 'Freelance — Scriptwriter',
-    node: 'DECAL_01_WriterCat_LeftTemple', azimuth: 68, distance: 0.71,
-    fov: 29, elevation: 0.085, frameRight: 0.105,
+    node: 'DECAL_01_WriterCat_LeftTemple', azimuth: 42, distance: 0.83,
+    fov: 29, elevation: 0.085, frameRight: 0.12,
   },
   {
     point: FOCUS_POINTS[2], label: 'Syngene International Ltd. — Research Professional',
-    node: 'DECAL_03_LabFlaskCat_Career', azimuth: 68, distance: 0.74,
-    fov: 29, elevation: 0.089, frameRight: 0.105,
+    node: 'DECAL_03_LabFlaskCat_Career', azimuth: 52, distance: 0.83,
+    fov: 29, elevation: 0.089, frameRight: 0.12,
   },
   {
     point: FOCUS_POINTS[3], label: 'Analytica Chemie Inc. — Synthetic Chemistry R&D',
-    node: 'DECAL_02_ScientistCat_RightTemple', azimuth: -69, distance: 0.74,
-    fov: 29, elevation: 0.089, frameRight: 0.105,
+    node: 'DECAL_02_ScientistCat_RightTemple', azimuth: -56, distance: 0.84,
+    fov: 29, elevation: 0.089, frameRight: 0.12,
   },
 ]
 
@@ -126,23 +126,39 @@ function Lights() {
  */
 type ScrollLayout = { tops: number[]; galleryTop: number; valid: boolean }
 
+/**
+ * A career sticker stays locked while its corresponding experience is on screen.
+ * We transition only after the NEXT experience enters the viewport, never across
+ * the empty scrolling distance between résumé entries. Pure scroll function:
+ * fast scrolling, slow scrolling and reverse scrolling always reach the same pose.
+ */
 function timelineProgress(layout: ScrollLayout) {
   if (!layout.valid || layout.tops.length !== CAREER_STOPS.length) return -1
-  const tops = layout.tops
+
   const viewport = Math.max(1, window.innerHeight)
-  const cursor = window.scrollY + viewport * 0.30
-  if (cursor <= tops[0]) {
-    const heroTravel = Math.max(1, tops[0] - viewport * 0.30)
-    return -1 + THREE.MathUtils.clamp(window.scrollY / heroTravel, 0, 1)
+  const positions = layout.tops
+  const scrollY = window.scrollY
+
+  // Homepage -> first résumé entry. End the move before Independent's heading
+  // reaches reading position, so the sticker is already settled.
+  const firstTop = positions[0] - scrollY
+  const intro = THREE.MathUtils.smoothstep(
+    (viewport * 0.94 - firstTop) / (viewport * 0.48), 0, 1,
+  )
+  if (intro < 1) return -1 + intro
+
+  // Hold the current career focus until the following heading comes into view.
+  // Transition during the following heading's first appearance (68vh -> 30vh).
+  // The rest of each entry scrolls without any change in framing or focus.
+  for (let next = 1; next < positions.length; next++) {
+    const nextTop = positions[next] - scrollY
+    const transition = THREE.MathUtils.smoothstep(
+      (viewport * 0.68 - nextTop) / (viewport * 0.38), 0, 1,
+    )
+    if (transition < 1) return next - 1 + transition
   }
-  for (let i = 0; i < tops.length - 1; i++) {
-    if (cursor <= tops[i + 1]) {
-      const fraction = THREE.MathUtils.clamp(
-        (cursor - tops[i]) / Math.max(1, tops[i + 1] - tops[i]), 0, 1,
-      )
-      return i + fraction
-    }
-  }
+
+  // Keep the Analytica molecule sticker focused until Selected Works arrives.
   return CAREER_STOPS.length - 1
 }
 
@@ -323,7 +339,7 @@ function SagarAvatarAndCamera({
     const desiredFov = fov + (mobile ? 4 : 0)
     // Damping is time-based, so behavior is stable on 30, 60, and 120 Hz displays.
     // One rate-independent spring for the complete transform, no snapped stop frames.
-    const follow = 1 - Math.exp(-12.0 * Math.min(delta, 0.08))
+    const follow = 1 - Math.exp(-14.0 * Math.min(delta, 0.08))
     const previousFov = perspective.fov
     if (!initialized.current) {
       perspective.position.copy(desired)
@@ -341,11 +357,15 @@ function SagarAvatarAndCamera({
 
     // Restore Sen's real selective DoF: focus the active sticker, soften other depths.
     const careerWeight = THREE.MathUtils.smoothstep(scroll, -0.72, -0.02) * (1 - works.entrance)
+    // Focus shares the same easing as the camera; it never drops to a neutral
+    // or unfocused state between the four career poses.
     focusRef.current.lerp(center, follow)
-    // Intentionally blur distant face/hair elements, not the active cat decal itself.
-    bokehRef.current = THREE.MathUtils.lerp(bokehRef.current, 8.5 * careerWeight, follow)
+    // A sticker can span up to ~8cm in depth on the curved forehead/cheek.
+    // The former 0.058-unit focus band blurred its own edges. Keep the full
+    // sticker sharp, while hair, ears and the opposite cheek recede softly.
+    bokehRef.current = THREE.MathUtils.lerp(bokehRef.current, 7.2 * careerWeight, follow)
     focusRangeRef.current = THREE.MathUtils.lerp(
-      focusRangeRef.current, THREE.MathUtils.lerp(0.40, 0.058, careerWeight), follow,
+      focusRangeRef.current, THREE.MathUtils.lerp(0.40, 0.135, careerWeight), follow,
     )
   })
 
@@ -372,7 +392,7 @@ function CareerDepthOfField({
     <EffectComposer multisampling={0} stencilBuffer={false} depthBuffer>
       <DepthOfField
         ref={effectRef} target={[0, 0.6, 0]}
-        worldFocusRange={0.058} bokehScale={8.5} height={480}
+        worldFocusRange={0.135} bokehScale={7.2} height={480}
       />
       <SMAA />
     </EffectComposer>
