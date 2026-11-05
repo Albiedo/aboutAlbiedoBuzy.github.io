@@ -1,7 +1,7 @@
-import { useMemo, useRef, useEffect } from 'react'
+import { useMemo, useRef, useEffect, type MutableRefObject } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import { EffectComposer, SMAA } from '@react-three/postprocessing'
+import { EffectComposer, DepthOfField, SMAA } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import Env from './Env'
 import { FOCUS_POINTS } from '../data/focusPoints'
@@ -66,20 +66,22 @@ type Pose = {
 }
 
 const HOME: Pose = {
-  center: new THREE.Vector3(0, 0.51, 0.07),
+  // Center on the real GLB silhouette, instead of offsetting the hero camera.
+  center: new THREE.Vector3(-0.048, 0.50, 0.015),
   azimuth: 0,
-  distance: 1.75,
+  distance: 1.95,
   fov: 36,
-  elevation: 0.08,
-  frameRight: 0.19,
+  elevation: 0.055,
+  frameRight: 0,
 }
 const WORKS: Pose = {
-  center: new THREE.Vector3(0, 0.52, 0.07),
-  azimuth: 12,
-  distance: 2.05,
+  center: new THREE.Vector3(-0.048, 0.50, 0.015),
+  azimuth: 20,
+  distance: 1.93,
   fov: 36,
-  elevation: 0.09,
-  frameRight: 0.17,
+  elevation: 0.06,
+  // Shift the framing point right to move the avatar LEFT in Selected Works.
+  frameRight: 0.54,
 }
 
 function GradientBackground() {
@@ -117,93 +119,91 @@ function Lights() {
   </>
 }
 
-function smootherStep(value: number) {
+// Never hold a fixed pose over a scroll interval: no dead zones or snapping.
+function scrollEase(value: number) {
   const t = THREE.MathUtils.clamp(value, 0, 1)
-  return t * t * (3 - 2 * t)
+  const smooth = t * t * (3 - 2 * t)
+  return 0.38 * t + 0.62 * smooth
 }
 
-/**
- * Progress: -1=hero, 0..3=career stops.
- * The hold region gives each sticker a real pause at its respective text block.
- * Source of truth is the existing DOM anchor order; Kannada and English share it.
- */
+/** -1 = hero, 0..3 = four exact career stops. Continuous and reversible. */
 function timelineProgress() {
-  const positions = CAREER_STOPS.map(({ point }) =>
-    document.querySelector<HTMLElement>(`[data-point="${point}"]`)
+  const anchors = CAREER_STOPS.map(({ point }) =>
+    document.querySelector<HTMLElement>(\`[data-point="\${point}"]\`)
   )
-  if (positions.some((p) => !p)) return -1
-  const tops = positions.map((p) => p!.getBoundingClientRect().top + window.scrollY)
-  const viewport = window.innerHeight
+  if (anchors.some((a) => !a)) return -1
+  const viewport = Math.max(1, window.innerHeight)
+  const tops = anchors.map((a) => a!.getBoundingClientRect().top + window.scrollY)
   const cursor = window.scrollY + viewport * 0.30
-  if (cursor < tops[0]) {
-    const heroTravel = Math.max(1, tops[0] - viewport * 0.30)
-    return -1 + smootherStep(window.scrollY / heroTravel)
+  if (cursor <= tops[0]) {
+    const travel = Math.max(1, tops[0] - viewport * 0.30)
+    return -1 + scrollEase(window.scrollY / travel)
   }
   for (let i = 0; i < tops.length - 1; i++) {
     if (cursor <= tops[i + 1]) {
       const fraction = (cursor - tops[i]) / Math.max(1, tops[i + 1] - tops[i])
-      // Hold current role, orbit to next sticker, hold next role.
-      return i + smootherStep((fraction - 0.24) / 0.55)
+      return i + scrollEase(fraction)
     }
   }
-  return 3
+  return CAREER_STOPS.length - 1
 }
 
+/** Two-phase gallery transition from Sen's original: entrance pan + pinned drift. */
 function worksProgress() {
-  const el = document.querySelector<HTMLElement>('.wk-gallery')
-  if (!el) return 0
-  const top = el.getBoundingClientRect().top
-  return smootherStep(1 - top / Math.max(1, window.innerHeight))
+  const gallery = document.querySelector<HTMLElement>('.wk-gallery')
+  if (!gallery) return { entrance: 0, drift: 0 }
+  const top = gallery.getBoundingClientRect().top
+  const entrance = scrollEase(1 - top / Math.max(1, window.innerHeight))
+  const drift = scrollEase(-top / Math.max(1, window.innerWidth))
+  return { entrance, drift }
 }
 
-function interpolatePose(a: Pose, b: Pose, t: number): Pose {
-  return {
-    center: a.center.clone().lerp(b.center, t),
-    azimuth: THREE.MathUtils.lerp(a.azimuth, b.azimuth, t),
-    distance: THREE.MathUtils.lerp(a.distance, b.distance, t),
-    fov: THREE.MathUtils.lerp(a.fov, b.fov, t),
-    elevation: THREE.MathUtils.lerp(a.elevation, b.elevation, t),
-    frameRight: THREE.MathUtils.lerp(a.frameRight, b.frameRight, t),
-  }
-}
-
-/** Returns position and look-at point in original GLB coordinates. */
 export function cameraFromPose(pose: Pose, mobile: boolean) {
   const angle = THREE.MathUtils.degToRad(pose.azimuth)
   const right = new THREE.Vector3(Math.cos(angle), 0, -Math.sin(angle))
-  const distance = pose.distance * (mobile ? 1.36 : 1)
-  const frameRight = pose.frameRight * (mobile ? 0.30 : 1)
+  const distance = pose.distance * (mobile ? 1.32 : 1)
+  const frameRight = pose.frameRight * (mobile ? 0.5 : 1)
   const aim = pose.center.clone().addScaledVector(right, frameRight)
   const position = aim.clone().add(new THREE.Vector3(
-    Math.sin(angle) * distance,
-    pose.elevation * (mobile ? 1.25 : 1),
-    Math.cos(angle) * distance,
+    Math.sin(angle) * distance, pose.elevation, Math.cos(angle) * distance,
   ))
   return { position, aim, fov: pose.fov + (mobile ? 4 : 0) }
 }
 
-function SagarAvatarAndCamera() {
+function SagarAvatarAndCamera({
+  focusRef, bokehRef, focusRangeRef,
+}: {
+  focusRef: MutableRefObject<THREE.Vector3>
+  bokehRef: MutableRefObject<number>
+  focusRangeRef: MutableRefObject<number>
+}) {
   const { scene } = useGLTF(MODEL_URL)
   const { camera } = useThree()
   const lookRef = useRef(new THREE.Vector3())
   const initialized = useRef(false)
+  // Reuse working vectors to avoid per-frame garbage collection and scroll stalls.
+  const centerRef = useRef(new THREE.Vector3())
+  const aimRef = useRef(new THREE.Vector3())
+  const desiredPosRef = useRef(new THREE.Vector3())
   const { avatar, poses } = useMemo(() => {
     const avatar = scene.clone(true)
     avatar.updateMatrixWorld(true)
     const poses: Pose[] = CAREER_STOPS.map((stop) => {
       const mesh = avatar.getObjectByName(stop.node)
-      if (!mesh) {
-        throw new Error(`Sagar avatar is missing required career sticker: ${stop.node}`)
-      }
+      if (!mesh) throw new Error(\`Missing career sticker: \${stop.node}\`)
       const center = new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3())
-      // Geometry nodes use positions in local GLB space; no extra scale or offset.
-      if (!Number.isFinite(center.x)) throw new Error(`Invalid sticker bounds: ${stop.node}`)
-      return { center, azimuth: stop.azimuth, distance: stop.distance,
-        fov: stop.fov, elevation: stop.elevation, frameRight: stop.frameRight }
+      if (!Number.isFinite(center.x)) throw new Error(\`Invalid sticker bounds: \${stop.node}\`)
+      return {
+        center, azimuth: stop.azimuth, distance: stop.distance,
+        fov: stop.fov, elevation: stop.elevation, frameRight: stop.frameRight,
+      }
     })
     avatar.traverse((obj) => {
       if (obj instanceof THREE.Mesh) {
-        obj.frustumCulled = false // thin decals must not vanish at oblique angles
+        // Allow frustum culling for the large avatar while keeping the small decals stable.
+        obj.frustumCulled = obj.geometry.getAttribute('position')?.count > 100000
+        obj.castShadow = false
+        obj.receiveShadow = false
       }
     })
     return { avatar, poses }
@@ -212,57 +212,117 @@ function SagarAvatarAndCamera() {
   useEffect(() => {
     if (!import.meta.env.DEV) return
     console.table(CAREER_STOPS.map((stop, i) => ({
-      experience: stop.label,
-      resumeAnchor: stop.point,
-      sticker: stop.node,
-      center: poses[i].center.toArray().map((v) => v.toFixed(3)).join(', '),
+      experience: stop.label, anchor: stop.point, sticker: stop.node,
+      target: poses[i].center.toArray().map((n) => n.toFixed(3)).join(', '),
     })))
   }, [poses])
 
   useFrame((state, delta) => {
-    const progress = timelineProgress()
-    const fromIndex = Math.floor(progress)
-    const toIndex = Math.min(3, fromIndex + 1)
-    const t = progress - fromIndex
-    const a = fromIndex < 0 ? HOME : poses[fromIndex]
-    const b = toIndex < 0 ? HOME : poses[toIndex]
-    const chosen = interpolatePose(a, b, t)
-    const works = worksProgress()
-    const final = works > 0 ? interpolatePose(chosen, WORKS, works) : chosen
-    const mobile = window.innerWidth <= 640 || window.matchMedia('(pointer: coarse)').matches
-    const desired = cameraFromPose(final, mobile)
-    const perspective = state.camera as THREE.PerspectiveCamera
+    const scroll = timelineProgress()
+    const firstIndex = Math.floor(scroll)
+    const secondIndex = Math.min(CAREER_STOPS.length - 1, firstIndex + 1)
+    const fraction = scroll - firstIndex
+    const from = firstIndex < 0 ? HOME : poses[firstIndex]
+    const to = secondIndex < 0 ? HOME : poses[secondIndex]
+    const center = centerRef.current.copy(from.center).lerp(to.center, fraction)
+    let azimuth = THREE.MathUtils.lerp(from.azimuth, to.azimuth, fraction)
+    let distance = THREE.MathUtils.lerp(from.distance, to.distance, fraction)
+    let fov = THREE.MathUtils.lerp(from.fov, to.fov, fraction)
+    let elevation = THREE.MathUtils.lerp(from.elevation, to.elevation, fraction)
+    let frameRight = THREE.MathUtils.lerp(from.frameRight, to.frameRight, fraction)
 
+    const works = worksProgress()
+    if (works.entrance > 0) {
+      const k = works.entrance
+      center.lerp(WORKS.center, k)
+      azimuth = THREE.MathUtils.lerp(azimuth, WORKS.azimuth, k)
+      distance = THREE.MathUtils.lerp(distance, WORKS.distance, k)
+      fov = THREE.MathUtils.lerp(fov, WORKS.fov, k)
+      elevation = THREE.MathUtils.lerp(elevation, WORKS.elevation, k)
+      frameRight = THREE.MathUtils.lerp(frameRight, WORKS.frameRight, k)
+      // Continue the leftward move as the works gallery starts its horizontal phase.
+      azimuth -= works.drift * 9
+      frameRight += works.drift * 0.08
+    }
+
+    const mobile = window.innerWidth <= 640 || window.matchMedia('(pointer: coarse)').matches
+    const angle = THREE.MathUtils.degToRad(azimuth)
+    const sin = Math.sin(angle)
+    const cos = Math.cos(angle)
+    const actualDistance = distance * (mobile ? 1.32 : 1)
+    const shift = frameRight * (mobile ? 0.5 : 1)
+    const aim = aimRef.current.set(center.x + cos * shift, center.y, center.z - sin * shift)
+    const desired = desiredPosRef.current.set(
+      aim.x + sin * actualDistance,
+      aim.y + elevation,
+      aim.z + cos * actualDistance,
+    )
+    const perspective = state.camera as THREE.PerspectiveCamera
+    const desiredFov = fov + (mobile ? 4 : 0)
+    // Damping is time-based, so behavior is stable on 30, 60, and 120 Hz displays.
+    const follow = 1 - Math.exp(-9.5 * Math.min(delta, 0.08))
+    const previousFov = perspective.fov
     if (!initialized.current) {
-      perspective.position.copy(desired.position)
-      lookRef.current.copy(desired.aim)
+      perspective.position.copy(desired)
+      lookRef.current.copy(aim)
+      perspective.fov = desiredFov
       initialized.current = true
     } else {
-      const follow = 1 - Math.exp(-5.2 * Math.min(delta, 0.08))
-      perspective.position.lerp(desired.position, follow)
-      lookRef.current.lerp(desired.aim, follow)
+      perspective.position.lerp(desired, follow)
+      lookRef.current.lerp(aim, follow)
+      perspective.fov = THREE.MathUtils.lerp(perspective.fov, desiredFov, follow)
     }
     perspective.lookAt(lookRef.current)
-    const targetFov = desired.fov
-    const nextFov = THREE.MathUtils.lerp(perspective.fov, targetFov, initialized.current ? 0.17 : 1)
-    if (Math.abs(perspective.fov - nextFov) > 0.001) {
-      perspective.fov = nextFov
-      perspective.updateProjectionMatrix()
-    }
+    if (Math.abs(perspective.fov - previousFov) > 0.0001) perspective.updateProjectionMatrix()
     camera.updateMatrixWorld()
+
+    // Restore Sen's real selective DoF: focus the active sticker, soften other depths.
+    const careerWeight = THREE.MathUtils.smoothstep(scroll, -0.72, -0.02) * (1 - works.entrance)
+    focusRef.current.lerp(center, follow)
+    bokehRef.current = THREE.MathUtils.lerp(bokehRef.current, 11.5 * careerWeight, follow)
+    focusRangeRef.current = THREE.MathUtils.lerp(
+      focusRangeRef.current, THREE.MathUtils.lerp(0.40, 0.024, careerWeight), follow,
+    )
   })
 
   return <primitive object={avatar} />
 }
 
+/** Depth-of-field target follows the current decal, as in the original Scene.tsx. */
+function CareerDepthOfField({
+  focusRef, bokehRef, focusRangeRef,
+}: {
+  focusRef: MutableRefObject<THREE.Vector3>
+  bokehRef: MutableRefObject<number>
+  focusRangeRef: MutableRefObject<number>
+}) {
+  const effectRef = useRef<any>(null)
+  useFrame(() => {
+    const effect = effectRef.current
+    if (!effect) return
+    if (effect.target) effect.target.copy(focusRef.current)
+    effect.bokehScale = bokehRef.current
+    if (effect.cocMaterial) effect.cocMaterial.focusRange = focusRangeRef.current
+  })
+  return (
+    <EffectComposer multisampling={0} stencilBuffer={false} depthBuffer>
+      <DepthOfField
+        ref={effectRef} target={[0, 0.6, 0]}
+        worldFocusRange={0.024} bokehScale={11.5} height={480}
+      />
+      <SMAA />
+    </EffectComposer>
+  )
+}
+
 export default function SagarScene() {
+  const focusRef = useRef(new THREE.Vector3(-0.048, 0.67, 0.15))
+  const bokehRef = useRef(0)
+  const focusRangeRef = useRef(0.40)
   return <>
     <GradientBackground />
     <Lights />
-    <SagarAvatarAndCamera />
-    {/* Keep sticker edges sharp: no depth-of-field blur on career details. */}
-    <EffectComposer multisampling={0} stencilBuffer={false}>
-      <SMAA />
-    </EffectComposer>
+    <SagarAvatarAndCamera focusRef={focusRef} bokehRef={bokehRef} focusRangeRef={focusRangeRef} />
+    <CareerDepthOfField focusRef={focusRef} bokehRef={bokehRef} focusRangeRef={focusRangeRef} />
   </>
 }
