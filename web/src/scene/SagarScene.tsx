@@ -129,7 +129,7 @@ function scrollEase(value: number) {
 /** -1 = hero, 0..3 = four exact career stops. Continuous and reversible. */
 function timelineProgress() {
   const anchors = CAREER_STOPS.map(({ point }) =>
-    document.querySelector<HTMLElement>(\`[data-point="\${point}"]\`)
+    document.querySelector<HTMLElement>(`[data-point="${point}"]`)
   )
   if (anchors.some((a) => !a)) return -1
   const viewport = Math.max(1, window.innerHeight)
@@ -190,9 +190,9 @@ function SagarAvatarAndCamera({
     avatar.updateMatrixWorld(true)
     const poses: Pose[] = CAREER_STOPS.map((stop) => {
       const mesh = avatar.getObjectByName(stop.node)
-      if (!mesh) throw new Error(\`Missing career sticker: \${stop.node}\`)
+      if (!mesh) throw new Error(`Missing career sticker: ${stop.node}`)
       const center = new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3())
-      if (!Number.isFinite(center.x)) throw new Error(\`Invalid sticker bounds: \${stop.node}\`)
+      if (!Number.isFinite(center.x)) throw new Error(`Invalid sticker bounds: ${stop.node}`)
       return {
         center, azimuth: stop.azimuth, distance: stop.distance,
         fov: stop.fov, elevation: stop.elevation, frameRight: stop.frameRight,
