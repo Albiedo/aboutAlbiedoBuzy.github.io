@@ -148,12 +148,12 @@ function timelineProgress(layout: ScrollLayout) {
   if (intro < 1) return -1 + intro
 
   // Hold the current career focus until the following heading comes into view.
-  // Transition during the following heading's first appearance (68vh -> 30vh).
+  // Transition during the following heading reaches reading view (46vh -> 16vh).
   // The rest of each entry scrolls without any change in framing or focus.
   for (let next = 1; next < positions.length; next++) {
     const nextTop = positions[next] - scrollY
     const transition = THREE.MathUtils.smoothstep(
-      (viewport * 0.68 - nextTop) / (viewport * 0.38), 0, 1,
+      (viewport * 0.46 - nextTop) / (viewport * 0.30), 0, 1,
     )
     if (transition < 1) return next - 1 + transition
   }
